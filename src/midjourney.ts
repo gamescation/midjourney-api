@@ -3,6 +3,7 @@ import {
   LoadingHandler,
   MJConfig,
   MJConfigParam,
+  MessageHandler,
 } from "./interfaces";
 import { MidjourneyApi } from "./midjourne.api";
 import { MidjourneyMessage } from "./discord.message";
@@ -59,7 +60,7 @@ export class Midjourney extends MidjourneyMessage {
     }
     return this;
   }
-  async Imagine(prompt: string, loading?: LoadingHandler) {
+  async Imagine(prompt: string, loading?: LoadingHandler, messageHandler?: MessageHandler) {
     prompt = prompt.trim();
     if (!this.config.Ws) {
       const seed = random(1000000000, 9999999999);
@@ -70,8 +71,10 @@ export class Midjourney extends MidjourneyMessage {
 
     const nonce = nextNonce();
     this.log(`Imagine`, prompt, "nonce", nonce);
-    const httpStatus = await this.MJApi.ImagineApi(prompt, nonce);
-    if (httpStatus !== 204) {
+    const response = await this.MJApi.ImagineApi(prompt, nonce);
+    console.log("Response: ", response)
+    messageHandler?.(response);
+    if (response.code !== 204) {
       throw new Error(`ImagineApi failed with status ${httpStatus}`);
     }
     if (this.wsClient) {

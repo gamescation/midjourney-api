@@ -20,7 +20,7 @@ export class MidjourneyApi extends Command {
     super(config);
   }
   private safeIteractions = (request: any) => {
-    return new Promise<number>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.queue.push(
         {
           request,
@@ -70,10 +70,10 @@ export class MidjourneyApi extends Command {
           config: this.config,
         });
       }
-      return response.status;
+      return response;
     } catch (error) {
       console.error(error);
-      return 500;
+      return error;
     }
   };
 
